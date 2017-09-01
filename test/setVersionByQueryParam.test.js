@@ -40,18 +40,16 @@ test('dont set a version if req object is not well composed: req.query is undefi
 
   middleware(t.context.req, {}, () => {
     t.is(t.context.req.query, undefined)
-    t.not(t.context.req.version, versionNumber)
+    t.not(t.context.req.version, versionRequest.formatVersion(versionNumber))
   })
 })
 
 test('dont set a version if no version query is set', t => {
-  const versionNumber = false
-
   t.context.req.query = {}
   const middleware = versionRequest.setVersionByQueryParam()
 
   middleware(t.context.req, {}, () => {
-    t.not(t.context.req.version, versionNumber)
+    t.is(t.context.req.version, undefined)
   })
 })
 
@@ -62,10 +60,9 @@ test('we can set a version on the request object by request query parameters', t
   const middleware = versionRequest.setVersionByQueryParam()
 
   middleware(t.context.req, {}, () => {
-    t.is(t.context.req.version, versionNumber)
+    t.is(t.context.req.version, versionRequest.formatVersion(versionNumber))
   })
 })
-
 
 test('we can manually set a specific version to be string', t => {
   const versionNumber = '1'
@@ -74,7 +71,7 @@ test('we can manually set a specific version to be string', t => {
   const middleware = versionRequest.setVersionByQueryParam()
 
   middleware(t.context.req, {}, () => {
-    t.is(t.context.req.version, versionNumber)
+    t.is(t.context.req.version, versionRequest.formatVersion(versionNumber))
   })
 })
 
@@ -85,7 +82,7 @@ test('we can manually set a specific version to be object', t => {
   const middleware = versionRequest.setVersionByQueryParam()
 
   middleware(t.context.req, {}, () => {
-    t.not(t.context.req.version, versionNumber)
+    t.is(t.context.req.version, versionRequest.formatVersion(versionNumber))
   })
 })
 
@@ -97,7 +94,7 @@ test('we can set a version on the request object by specifying custom http query
   const middleware = versionRequest.setVersionByQueryParam(versionParamName)
 
   middleware(t.context.req, {}, () => {
-    t.is(t.context.req.version, versionNumber)
+    t.is(t.context.req.version, versionRequest.formatVersion(versionNumber))
   })
 })
 
@@ -109,7 +106,7 @@ test('we can set a version on the request object by specifying custom http query
   const middleware = versionRequest.setVersionByQueryParam(versionParamName)
 
   middleware(t.context.req, {}, () => {
-    t.is(t.context.req.version, versionNumber)
+    t.is(t.context.req.version, versionRequest.formatVersion(versionNumber))
   })
 })
 
@@ -121,7 +118,7 @@ test('do not allow to set a version on the request object by specifying custom h
   const middleware = versionRequest.setVersionByQueryParam(versionParamName)
 
   middleware(t.context.req, {}, () => {
-    t.not(t.context.req.version, versionNumber)
+    t.is(t.context.req.version, versionRequest.formatVersion(versionNumber))
   })
 })
 
@@ -134,7 +131,7 @@ test('custom query param should be deleted from req.query after handling it', t 
   const middleware = versionRequest.setVersionByQueryParam(versionParamName, options)
 
   middleware(t.context.req, {}, () => {
-    t.is(t.context.req.version, versionNumber)
+    t.is(t.context.req.version, versionRequest.formatVersion(versionNumber))
     t.falsy(t.context.req.query.hasOwnProperty(versionParamName))
   })
 })
@@ -147,7 +144,7 @@ test('default query param should be deleted from req.query after handling it', t
   const middleware = versionRequest.setVersionByQueryParam(null, options)
 
   middleware(t.context.req, {}, () => {
-    t.is(t.context.req.version, versionNumber)
+    t.is(t.context.req.version, versionRequest.formatVersion(versionNumber))
     t.falsy(t.context.req.query.hasOwnProperty('api-version'))
   })
 })
