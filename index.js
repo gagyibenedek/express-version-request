@@ -89,10 +89,23 @@ class versionRequest {
       return JSON.stringify(version)
     }
     let ver = version.toString()
-    for (let i = ver.split('.').length; i < 3; i++) {
-      ver += '.0'
+    let split = ver.split('.')
+    if (split.length === 3) {
+      return ver
     }
-    return ver
+    if (split.length < 3) {
+      for (let i = split.length; i < 3; i++) {
+        ver += '.0'
+      }
+      return ver
+    }
+    if (split.length > 3) {
+      while (split.length > 3 && ver.indexOf('.0') !== -1) {
+        ver = ver.replace('.0', '')
+        split = ver.split('.')
+      }
+      return ver
+    }
   }
 }
 
