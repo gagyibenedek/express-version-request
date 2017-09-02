@@ -55,24 +55,24 @@ test('dont set a version if no version header is set', t => {
 })
 
 test('we can set a version on the request object by request headers', t => {
-  const versionNumber = 1
+  const versionNumber = '1.0.0'
 
   t.context.req.headers['x-api-version'] = versionNumber
   const middleware = versionRequest.setVersionByHeader()
 
   middleware(t.context.req, {}, () => {
-    t.is(t.context.req.version, versionRequest.formatVersion(versionNumber))
+    t.is(t.context.req.version, versionNumber)
   })
 })
 
 test('we can manually set a specific version to be string', t => {
-  const versionNumber = '1'
+  const versionNumber = '1.0.0'
 
   t.context.req.headers['x-api-version'] = versionNumber
   const middleware = versionRequest.setVersionByHeader()
 
   middleware(t.context.req, {}, () => {
-    t.is(t.context.req.version, versionRequest.formatVersion(versionNumber))
+    t.is(t.context.req.version, versionNumber)
   })
 })
 
@@ -83,7 +83,7 @@ test('we can manually set a specific version to be object', t => {
   const middleware = versionRequest.setVersionByHeader()
 
   middleware(t.context.req, {}, () => {
-    t.is(t.context.req.version, versionRequest.formatVersion(versionNumber))
+    t.is(t.context.req.version, JSON.stringify(versionNumber))
   })
 })
 
@@ -100,18 +100,18 @@ test('we can set a version on the request object by specifying custom http heade
 })
 
 test('we can set a version on the request object by specifying custom http header as string', t => {
-  const versionNumber = '1'
+  const versionNumber = '1.0.0'
   const versionHeaderName = 'my-api-version-header'
 
   t.context.req.headers[versionHeaderName] = versionNumber
   const middleware = versionRequest.setVersionByHeader(versionHeaderName)
 
   middleware(t.context.req, {}, () => {
-    t.is(t.context.req.version, versionRequest.formatVersion(versionNumber))
+    t.is(t.context.req.version, versionNumber)
   })
 })
 
-test('do not allow to set a version on the request object by specifying custom http header by object', t => {
+test('we can set a version on the request object by specifying custom http header by object', t => {
   const versionNumber = { myVersion: 'alpha' }
   const versionHeaderName = 'my-api-version-header'
 
@@ -119,6 +119,6 @@ test('do not allow to set a version on the request object by specifying custom h
   const middleware = versionRequest.setVersionByHeader(versionHeaderName)
 
   middleware(t.context.req, {}, () => {
-    t.is(t.context.req.version, versionRequest.formatVersion(versionNumber))
+    t.is(t.context.req.version, JSON.stringify(versionNumber))
   })
 })

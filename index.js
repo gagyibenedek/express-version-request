@@ -82,7 +82,7 @@ class versionRequest {
   }
 
   static formatVersion (version) {
-    if (!version || typeof version === 'function' || version === false) {
+    if (!version || typeof version === 'function' || version === true) {
       return undefined
     }
     if (typeof version === 'object') {
