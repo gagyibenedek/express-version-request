@@ -20,14 +20,9 @@ test('it converts and corrects the version, if the input is a number', t => {
   t.is(versionRequest.formatVersion(1.2), '1.2.0')
 })
 
-test('it shold remove .0-s if the version is longer than it should', t => {
-  t.is(versionRequest.formatVersion('1.0.0.0.0.0.1'), '1.0.1')
-  t.is(versionRequest.formatVersion('1.0.0.1.0.0.1'), '1.1.1')
-})
-
-test('it shold remove .0-s if the version is longer than it should, but leave it longer, if it contains no more 0-s', t => {
-  t.is(versionRequest.formatVersion('1.0.1.1.1.0.1'), '1.1.1.1.1')
-  t.is(versionRequest.formatVersion('1.0.0.1.0.0.1.0.0.1'), '1.1.1.1')
+test('it shold truncate the version if its longer than it should be', t => {
+  t.is(versionRequest.formatVersion('1.0.0.0.0.0.1'), '1.0.0')
+  t.is(versionRequest.formatVersion('1.0.1.1.0.0.1'), '1.0.1')
 })
 
 test('it returns undefined, if the input cant be converted into a correct version', t => {

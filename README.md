@@ -108,7 +108,7 @@ app.use(versionRequest.setVersionByAcceptHeader(customParsingFunction))
 Before setting the version, it is always formatted, so the resulting version is a semver comaptible string, except the following cases:
 
 * if the version was set as an Object, it will be returned in stringified format (using JSON.stringify)
-* if the version has a longer format than the semver format, we attept to clean it up by removing the zeros (e.g. 1.0.0.1 will become 1.0.1), but if there are no more zeros to remove, we leave it as it is (e.g. 1.0.1.1.1 will become 1.1.1.1)
+* if the version is longer than the semver format, we truncate it by cutting off the tail, and leaving the first three segments (e.g.: 1.2.3.4.5 will become 1.2.3)
 * if we encunter something, that can't be parsed or formatted as a version, undefined is returned
 
 This formatting function is called automatically for each version setting method, but it can also be used independently:

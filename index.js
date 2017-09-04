@@ -100,11 +100,7 @@ class versionRequest {
       return ver
     }
     if (split.length > 3) {
-      while (split.length > 3 && ver.indexOf('.0') !== -1) {
-        ver = ver.replace('.0', '')
-        split = ver.split('.')
-      }
-      return ver
+      return split.slice(0, 3).join('.')
     }
   }
 }
