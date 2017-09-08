@@ -14,6 +14,7 @@ test('we can manually set a specific version to be integer', t => {
 
   const middleware = versionRequest.setVersion(versionNumber)
   middleware(t.context.req, {}, () => {
+    t.is(t.context.req.version, versionNumber + '.0.0')
     t.is(versionRequestSpy.called, true)
   })
 
