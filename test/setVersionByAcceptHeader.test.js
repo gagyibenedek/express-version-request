@@ -2,6 +2,7 @@
 
 const test = require('ava')
 const versionRequest = require('../index')
+const sinon = require('sinon')
 
 test.beforeEach(t => {
   t.context.req = {
@@ -49,7 +50,7 @@ test('we can set the version using the Accept header version field, even if it m
   const middleware = versionRequest.setVersionByAcceptHeader()
 
   middleware(t.context.req, {}, () => {
-    t.deepEqual(t.context.req.version, versionRequest.formatVersion(versionNumber))
+    t.deepEqual(t.context.req.version, versionNumber)
   })
 })
 
@@ -80,12 +81,40 @@ test('dont set the version if the Accept header has no parameters at all (withou
   })
 })
 
-//  Alternative format
+test('dont set the version if the Accept header if we cant parse it', t => {
+  t.context.req.headers['accept'] = 'application/json;abd'
+  const middleware = versionRequest.setVersionByAcceptHeader()
 
-test('we can set the version using the Accept header alternative format', t => {
+  middleware(t.context.req, {}, () => {
+    t.deepEqual(t.context.req.version, undefined)
+  })
+})
+
+test('dont set the version if the Accept header if we cant parse it', t => {
+  t.context.req.headers['accept'] = 42
+  const middleware = versionRequest.setVersionByAcceptHeader()
+
+  middleware(t.context.req, {}, () => {
+    t.deepEqual(t.context.req.version, undefined)
+  })
+})
+
+//  Alternative format
+test('we can set the version using the Accept header alternative format 1', t => {
   const versionNumber = '1.0.0'
 
   t.context.req.headers['accept'] = 'application/vnd.company-v' + versionNumber + '+json'
+  const middleware = versionRequest.setVersionByAcceptHeader()
+
+  middleware(t.context.req, {}, () => {
+    t.deepEqual(t.context.req.version, versionNumber)
+  })
+})
+
+test('we can set the version using the Accept header alternative format 2', t => {
+  const versionNumber = '1.0.0'
+
+  t.context.req.headers['accept'] = 'application/vnd.company.v' + versionNumber + '+json'
   const middleware = versionRequest.setVersionByAcceptHeader()
 
   middleware(t.context.req, {}, () => {
@@ -124,13 +153,16 @@ test('we can set the version using a custom function to parse the Accept header'
 
 test('we can handle, if the custom function returns a number', t => {
   const versionNumber = '1.1'
+  const versionRequestSpy = sinon.spy(versionRequest, 'formatVersion')
 
   t.context.req.headers['accept'] = versionNumber
   const middleware = versionRequest.setVersionByAcceptHeader(v => parseFloat(v))
 
   middleware(t.context.req, {}, () => {
-    t.deepEqual(t.context.req.version, versionRequest.formatVersion(versionNumber))
+    t.deepEqual(t.context.req.version, versionNumber + '.0')
+    t.is(versionRequestSpy.called, true)
   })
+  versionRequestSpy.restore()
 })
 
 test('we can handle, if the custom function returns a boolean', t => {
